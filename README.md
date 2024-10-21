@@ -1,8 +1,11 @@
-P1-4
+ # P1-4
 
-Darbu veidoja:
+# Darbu veidoja:
 
 Niks Grīnbarts,
+
 Ričards Štrauss,
+
 Linards Linde,
+
 Kārlis Gunārs Neikens,
