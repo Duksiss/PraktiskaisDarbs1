@@ -1,47 +1,66 @@
-<!-- resources/views/products/show.blade.php -->
 @extends('layouts.app')
 
-@section('title', 'Product Details')
-
 @section('content')
-    <h1>{{ $product->name }}</h1>
-    <p>Price: ${{ $product->price }}</p>
-    <p>Description: {{ $product->description }}</p>
-
-    <h3>Reviews</h3>
-    @if($reviews->isEmpty())
-        <p>No reviews yet. Be the first to review!</p>
-    @else
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <img src="https://via.placeholder.com/300" class="img-fluid" alt="{{ $product->name }}">
+            </div>
+            <div class="col-md-6">
+                <h1>{{ $product->name }}</h1>
+                <p>{{ $product->description }}</p>
+                <p><strong>Price:</strong> ${{ $product->price }}</p>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <h3>Reviews</h3>
         @foreach($reviews as $review)
-            <div class="card mb-2">
-                <div class="card-body">
-                    <h5 class="card-title">Rating: {{ $review->rating }}/5</h5>
-                    <p class="card-text">{{ $review->comment }}</p>
-                    <p class="text-muted">Reviewed on: {{ $review->created_at->format('d M Y') }}</p>
+            <div class="media mb-3">
+                <div class="media-body">
+                    <h5 class="mt-0">{{ $review->user->name }} (Rating: {{ $review->rating }}/5)</h5>
+                    <p>{{ $review->comment }}</p>
+
+                    @if(auth()->check() && auth()->id() == $review->user_id)
+                        <div class="mt-2">
+                            <!-- Edit Button -->
+                            <a href="{{ route('reviews.edit', ['product' => $product->id, 'review' => $review->id]) }}" class="btn btn-sm btn-warning">Edit</a>
+
+                            <!-- Delete Form -->
+                            <form action="{{ route('reviews.destroy', ['product' => $product->id, 'review' => $review->id]) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </div>
+                    @endif
                 </div>
             </div>
         @endforeach
-    @endif
-
-    @auth
-        <h3>Add a Review</h3>
-        <form action="{{ url('/reviews') }}" method="POST">
-            @csrf
-            <input type="hidden" name="product_id" value="{{ $product->id }}">
-
-            <div class="form-group">
-                <label for="rating">Rating (1-5)</label>
-                <input type="number" name="rating" class="form-control" min="1" max="5" required>
-            </div>
-
-            <div class="form-group">
-                <label for="comment">Comment</label>
-                <textarea name="comment" class="form-control" required></textarea>
-            </div>
-
-            <button type="submit" class="btn btn-success">Submit Review</button>
-        </form>
-    @else
-        <p>Please <a href="{{ route('login') }}">login</a> or <a href="{{ route('register') }}">register</a> to leave a review.</p>
-    @endauth
+        
+        @auth
+            <h4>Add a Review</h4>
+            <form action="{{ route('reviews.store', $product) }}" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label for="rating">Rating:</label>
+                    <select name="rating" id="rating" class="form-control">
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Good</option>
+                        <option value="3">3 - Average</option>
+                        <option value="2">2 - Poor</option>
+                        <option value="1">1 - Terrible</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="comment">Comment:</label>
+                    <textarea name="comment" id="comment" rows="3" class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Review</button>
+            </form>
+        @else
+            <p><a href="{{ route('login') }}">Login</a> to submit a review.</p>
+        @endauth
+    </div>
 @endsection
