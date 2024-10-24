@@ -44,14 +44,10 @@
             <form action="{{ route('reviews.store', $product) }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label for="rating">Rating:</label>
-                    <select name="rating" id="rating" class="form-control">
-                        <option value="5">5 - Excellent</option>
-                        <option value="4">4 - Good</option>
-                        <option value="3">3 - Average</option>
-                        <option value="2">2 - Poor</option>
-                        <option value="1">1 - Terrible</option>
-                    </select>
+                <div class="form-group">
+                <label for="rating">Rating (1-5)</label>
+                <input type="number" name="rating" class="form-control" min="1" max="5" required>
+            </div>
                 </div>
                 <div class="form-group">
                     <label for="comment">Comment:</label>
